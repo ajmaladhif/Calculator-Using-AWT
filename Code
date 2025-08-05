@@ -1,0 +1,134 @@
+import java.awt.*;
+import java.awt.event.*;
+
+public class Calculator extends Frame implements ActionListener {
+
+    TextField display;
+    Button[] buttons = new Button[10];
+    Button plus, minus, multiply, divide, reset, equal, clear;
+
+    Calculator() {
+        setLayout(null);
+        setTitle("Calc");
+        setSize(500, 600);
+        setVisible(true);
+
+        display = new TextField("0");
+        display.setBounds(50, 50, 400, 50);
+        add(display);
+
+        // Create number buttons 0-9
+        int x = 50, y = 100;
+        for (int i = 1; i <= 9; i++) {
+            buttons[i] = new Button(String.valueOf(i));
+            buttons[i].setBounds(x, y, 80, 80);
+            buttons[i].addActionListener(this);
+            add(buttons[i]);
+
+            x += 100;
+            if (i % 3 == 0) {
+                x = 50;
+                y += 100;
+            }
+        }
+
+        buttons[0] = new Button("0");
+        buttons[0].setBounds(50, 400, 80, 80);
+        buttons[0].addActionListener(this);
+        add(buttons[0]);
+
+        // Operators
+        plus = new Button("+");
+        plus.setBounds(350, 300, 80, 80);
+        plus.addActionListener(this);
+        add(plus);
+
+        minus = new Button("-");
+        minus.setBounds(350, 200, 80, 80);
+        minus.addActionListener(this);
+        add(minus);
+
+        multiply = new Button("X");
+        multiply.setBounds(350, 100, 80, 80);
+        multiply.addActionListener(this);
+        add(multiply);
+
+        divide = new Button("/");
+        divide.setBounds(250, 400, 80, 80);
+        divide.addActionListener(this);
+        add(divide);
+
+        equal = new Button("=");
+        equal.setBounds(150, 400, 80, 80);
+        equal.addActionListener(this);
+        add(equal);
+
+        reset = new Button("CE");
+        reset.setBounds(350, 400, 80, 80);
+        reset.addActionListener(this);
+        add(reset);
+
+        clear = new Button("<-");
+        clear.setBounds(150, 500, 80, 40);
+        clear.addActionListener(this);
+        add(clear);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String exp = display.getText();
+        Object source = e.getSource();
+
+        for (int i = 0; i <= 9; i++) {
+            if (source == buttons[i]) {
+                if (exp.equals("0")) exp = "";
+                display.setText(exp + i);
+                return;
+            }
+        }
+
+        if (source == plus) display.setText(exp + "+");
+        else if (source == minus) display.setText(exp + "-");
+        else if (source == multiply) display.setText(exp + "X");
+        else if (source == divide) display.setText(exp + "/");
+        else if (source == reset) display.setText("0");
+        else if (source == clear) {
+            if (exp.length() > 1)
+                display.setText(exp.substring(0, exp.length() - 1));
+            else
+                display.setText("0");
+        }
+        else if (source == equal) {
+            try {
+                char operator = 0;
+                int i;
+                for (i = 0; i < exp.length(); i++) {
+                    char c = exp.charAt(i);
+                    if (!Character.isDigit(c)) {
+                        operator = c;
+                        break;
+                    }
+                }
+
+                int a = Integer.parseInt(exp.substring(0, i));
+                int b = Integer.parseInt(exp.substring(i + 1));
+                int result = 0;
+
+                switch (operator) {
+                    case '+': result = a + b; break;
+                    case '-': result = a - b; break;
+                    case 'X': result = a * b; break;
+                    case '/': result = b != 0 ? a / b : 0; break;
+                }
+
+                display.setText(String.valueOf(result));
+            } catch (Exception ex) {
+                display.setText("Error");
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        new Calculator();
+    }
+}
